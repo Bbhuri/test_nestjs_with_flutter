@@ -6,18 +6,28 @@ import {
   Body,
   Delete,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
+import { ItemStatus } from './entities/item.entity';
 
 @Controller('items')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Get()
-  getAll() {
-    return this.itemsService.findAll();
+  getAll(
+    @Query('name') name?: string,
+    @Query('category') category?: string,
+    @Query('status') status?: ItemStatus,
+  ) {
+    return this.itemsService.findAll({
+      name,
+      category,
+      status,
+    });
   }
 
   @Get(':id')

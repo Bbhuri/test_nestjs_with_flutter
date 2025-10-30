@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Item } from './entities/item.entity';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Item, ItemStatus } from './entities/item.entity';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 
@@ -12,8 +12,35 @@ export class ItemsService {
     private readonly itemsRepository: Repository<Item>,
   ) {}
 
-  findAll() {
-    return this.itemsRepository.find();
+  async findAll(filters: {
+    name?: string;
+    category?: string;
+    status?: ItemStatus;
+  }): Promise<Item[]> {
+    const query: SelectQueryBuilder<Item> =
+      this.itemsRepository.createQueryBuilder('item');
+
+    if (filters.name) {
+      query.andWhere('item.item_name ILIKE :name', {
+        name: `%${filters.name}%`,
+      });
+    }
+
+    if (filters.category) {
+      query.andWhere('item.category ILIKE :category', {
+        category: `%${filters.category}%`,
+      });
+    }
+
+    if (filters.status) {
+      query.andWhere('item.status = :status', { status: filters.status });
+    }
+
+    query.orderBy('item.id', 'ASC');
+
+    const items: Item[] = await query.getMany();
+
+    return items;
   }
 
   async findOne(id: number) {
