@@ -1,5 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum ItemStatus {
+  IN_STOCK = 'In Stock',
+  LOW_STOCK = 'Low Stock',
+  OUT_OF_STOCK = 'Out of Stock',
+}
 @Entity('items')
 export class Item {
   @PrimaryGeneratedColumn()
@@ -29,6 +34,11 @@ export class Item {
   })
   price: number;
 
-  @Column({ name: 'status', type: 'varchar', length: 50, default: 'In Stock' })
-  status: string;
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: ItemStatus,
+    default: ItemStatus.OUT_OF_STOCK,
+  })
+  status: ItemStatus;
 }

@@ -4,7 +4,9 @@ import {
   IsString,
   IsNumber,
   Min,
+  IsEnum,
 } from 'class-validator';
+import { ItemStatus } from '../entities/item.entity';
 
 export class CreateItemDto {
   @IsNotEmpty()
@@ -34,6 +36,6 @@ export class CreateItemDto {
   price?: number;
 
   @IsOptional()
-  @IsString()
-  status?: string;
+  @IsEnum(ItemStatus)
+  status?: ItemStatus = ItemStatus.OUT_OF_STOCK;
 }
