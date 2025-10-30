@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Item } from './entities/item.entity';
 import { CreateItemDto } from './dto/create-item.dto';
+import { UpdateItemDto } from './dto/update-item.dto';
 
 @Injectable()
 export class ItemsService {
@@ -22,6 +23,10 @@ export class ItemsService {
   create(payload: CreateItemDto) {
     const newItem = this.itemsRepository.create(payload);
     return this.itemsRepository.save(newItem);
+  }
+
+  update(id: number, payload: UpdateItemDto) {
+    return this.itemsRepository.update(id, payload);
   }
 
   delete(id: number) {
