@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItemsModule } from './items/items.module';
+import { ItemSeederService } from './seeds/item-seeder.service';
+import { Item } from './items/entities/item.entity';
 
 @Module({
   imports: [
-    ItemsModule,
     TypeOrmModule.forRoot({
       type: 'postgres', // or 'mysql'
       host: 'localhost',
@@ -15,6 +16,9 @@ import { ItemsModule } from './items/items.module';
       autoLoadEntities: true,
       synchronize: true, // auto-create tables
     }),
+    TypeOrmModule.forFeature([Item]),
+    ItemsModule,
   ],
+  providers: [ItemSeederService],
 })
 export class AppModule {}
