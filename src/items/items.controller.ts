@@ -18,16 +18,20 @@ export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Get()
-  getAll(
+  async getAll(
     @Query('name') name?: string,
     @Query('category') category?: string,
     @Query('status') status?: ItemStatus,
   ) {
-    return this.itemsService.findAll({
+    const items = await this.itemsService.findAll({
       name,
       category,
       status,
     });
+    return {
+      statusCode: 200,
+      data: items,
+    };
   }
 
   @Get(':id')
