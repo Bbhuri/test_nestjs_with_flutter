@@ -11,22 +11,15 @@ import {
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
-import { ItemStatus } from './entities/item.entity';
 
 @Controller('items')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Get()
-  async getAll(
-    @Query('name') name?: string,
-    @Query('category') category?: string,
-    @Query('status') status?: ItemStatus,
-  ) {
+  async getAll(@Query('search') search?: string) {
     const items = await this.itemsService.findAll({
-      name,
-      category,
-      status,
+      search,
     });
     return {
       statusCode: 200,
