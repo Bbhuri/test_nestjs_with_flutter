@@ -19,6 +19,7 @@ export class ItemsService {
     if (filters.search) {
       query.andWhere(
         `(item.item_name ILIKE :search 
+        OR item.sku ILIKE :search 
         OR item.category ILIKE :search 
         OR item.status::text ILIKE :search)`,
         { search: `%${filters.search}%` },
