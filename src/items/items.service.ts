@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Item } from './entities/item.entity';
@@ -41,9 +46,30 @@ export class ItemsService {
     return item;
   }
 
-  create(payload: CreateItemDto) {
-    const newItem = this.itemsRepository.create(payload);
-    return this.itemsRepository.save(newItem);
+  async create(payload: CreateItemDto) {
+    try {
+      const newItem = this.itemsRepository.create(payload);
+      const savedItem = await this.itemsRepository.save(newItem);
+
+      return {
+        statusCode: 201,
+        message: 'Item created successfully.',
+        data: savedItem,
+      };
+    } catch (error) {
+      // 🧠 Handle duplicate SKU (unique constraint violation)
+      if (error.code === '23505') {
+        throw new ConflictException(
+          `SKU '${payload.sku}' already exists. Please use a different SKU.`,
+        );
+      }
+
+      // 🧱 Handle all other errors
+      throw new InternalServerErrorException({
+        message: 'Failed to create item.',
+        error: error.message,
+      });
+    }
   }
 
   async update(id: number, payload: UpdateItemDto) {

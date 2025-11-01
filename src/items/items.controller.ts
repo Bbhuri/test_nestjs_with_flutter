@@ -43,7 +43,25 @@ export class ItemsController {
   }
 
   @Delete(':id')
-  deleteItem(@Param('id') id: string) {
-    return this.itemsService.delete(+id);
+  async deleteItem(@Param('id') id: string) {
+    try {
+      const result = await this.itemsService.delete(+id);
+      if (result.affected === 0) {
+        return {
+          statusCode: 404,
+          message: `Item id:${id} not found.`,
+        };
+      }
+      return {
+        statusCode: 200,
+        message: `Item id:${id} has been deleted.`,
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: `Failed to delete item id:${id}`,
+        error: error.message,
+      };
+    }
   }
 }
