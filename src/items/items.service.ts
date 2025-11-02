@@ -78,7 +78,7 @@ export class ItemsService {
       if (result.affected === 0) {
         throw new BadRequestException(`Item with id ${id} not found`);
       }
-      return result;
+      return { statusCode: 200, message: 'Item updated successfully.', result };
     } catch (error) {
       console.log(Error(error));
       throw new BadRequestException(error.message);
