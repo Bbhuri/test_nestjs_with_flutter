@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Check } from 'typeorm';
 
 export enum ItemStatus {
   IN_STOCK = 'In Stock',
@@ -19,7 +19,7 @@ export class Item {
   @Column({ name: 'category', type: 'varchar', length: 100, nullable: true })
   category: string;
 
-  @Column({ name: 'description', type: 'text', nullable: true })
+  @Column({ name: 'description', type: 'varchar', length: 255, nullable: true })
   description: string;
 
   @Column({ name: 'quantity', type: 'int', default: 0 })
@@ -36,9 +36,10 @@ export class Item {
 
   @Column({
     name: 'status',
-    type: 'enum',
-    enum: ItemStatus,
+    type: 'varchar2',
+    length: 20,
     default: ItemStatus.OUT_OF_STOCK,
   })
+  @Check(`"status" IN ('In Stock', 'Low Stock', 'Out of Stock')`)
   status: ItemStatus;
 }
